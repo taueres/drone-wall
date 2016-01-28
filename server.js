@@ -9,6 +9,18 @@ app.use( express.static( __dirname ) );
 app.set( "view engine", "ejs" );
 app.set( "views", __dirname );
 
+var oldApiMapping = function (builds) {
+    return builds.map(function (build, index) {
+        var newBuild = build;
+
+        newBuild.updated_at = build.created_at;
+        newBuild.duration = build.finished_at ? build.started_at - build.finished_at : 0;
+        newBuild.status = build.status.toLowerCase();
+
+        return newBuild;
+    });
+};
+
 var serveIndex = function ( req, res, next )
 {
     res.render( "index", {
@@ -23,7 +35,8 @@ var serveFeed = function ( req, res, next )
     var apiPort   = process.env.API_PORT || (apiScheme == "https" ? 443 : 80);
     var apiToken  = process.env.API_TOKEN  || "";
 
-    var path   = "/api/user/activity?access_token=" + apiToken;
+    //var path   = "/api/user/activity?access_token=" + apiToken;
+    var path   = "/api/repos/collaboratori/collaboratori2/builds";
     var client = apiScheme == "https" ? https : http;
 
     var req = client.get(
@@ -43,8 +56,9 @@ var serveFeed = function ( req, res, next )
         } ).on( "end", function( )
         {
             var feed = JSON.parse(body);
-            res.send(feed);
+            var newFeed = oldApiMapping(feed);
 
+            res.send(newFeed);
         } );
     } );
 
