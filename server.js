@@ -9,6 +9,10 @@ app.use( express.static( __dirname ) );
 app.set( "view engine", "ejs" );
 app.set( "views", __dirname );
 
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 var oldApiMapping = function (builds) {
     return builds.map(function (build, index) {
         var newBuild = build;
@@ -17,8 +21,9 @@ var oldApiMapping = function (builds) {
         newBuild.duration = build.finished_at ? build.started_at - build.finished_at : 0;
         newBuild.status = build.status.toLowerCase();
 	if (newBuild.status == 'running') {
-            newBuild.status = 'pending';
+            newBuild.status = 'started';
         }
+        newBuild.status = capitalizeFirstLetter(newBuild.status);
 	newBuild.sha = build.commit;
 
         return newBuild;
