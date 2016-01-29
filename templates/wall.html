@@ -1,45 +1,4 @@
-<section>
-
-    <h1>Watching since <span data-ng-bind="watchTime | moment: 'dddd, MMMM Do [at] h:mm a': true">...</span></h1>
-
-    <div class="theme">
-        <a data-ng-click="toggleTheme( 'light' )" class="theme-light">light</a>
-        <a data-ng-click="toggleTheme( 'dark' )" class="theme-dark">dark</a>
-    </div>
-
-    <div class="column">
-
-        <ul class="repos">
-
-            <li data-ng-repeat="repo in displayRepos" class="[[ repo.status ]]" data-scroll-repo>
-
-                <div class="author">
-                    <img data-ng-src="[[ gravatarPrefix + repo.gravatar ]]?s=100" data-ng-if="repo.gravatar">
-                    <span class="no-author" data-ng-if="!repo.gravatar"><i class="fa fa-user" data-ng-if="repo.lastMerge"></i></span>
-                    <i class="fa fa-circle-o-notch fa-spin" data-ng-if="repo.status == 'Started'"></i>
-                </div>
-
-                <ul class="pull-requests">
-                    <li data-ng-repeat="pull in repo.pulls | filter: { merging: false }" class="[[ pull.status ]]">
-                        <div class="pull-author">
-                            <img data-ng-src="[[ gravatarPrefix + pull.gravatar ]]?s=100" data-ng-if="pull.gravatar">
-                            <span class="no-author" data-ng-if="!pull.gravatar"><i class="fa fa-user"></i></span>
-                            <i class="fa fa-circle-o-notch fa-spin" data-ng-if="pull.status == 'Started'"></i>
-                        </div>
-                    </li>
-                </ul>
-
-                <div class="repo-name">[[ repo.name ]]</div>
-
-            </li>
-
-        </ul>
-
-    </div>
-
-</section>
-
-<section>
+<section style="width: 100%">
 
     <section class="last-failure">
 
@@ -114,7 +73,7 @@
                     <span class="no-author" data-ng-if="!build.gravatar"><i class="fa fa-user"></i></span>
                     <i class="fa fa-circle-o-notch fa-spin" data-ng-if="build.status == 'Started'"></i>
                 </div>
-                <div class="name">[[ build.name ]]</div>
+                <div class="name">[[ build.branch ]]</div>
                 <div class="message">[[ build.message ]]</div>
                 <div class="when" data-ng-if="build.status != 'Pending'">[[ build.started_at * 1000 | from:now ]] ago</div>
                 <div class="when" data-ng-if="build.status == 'Pending'">Build Pending</div>

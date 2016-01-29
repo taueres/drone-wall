@@ -10,7 +10,7 @@ angular.module( "wall.controllers", [] )
 
         // TODO: read from localstorage if available, decide which bits are old and should be discarded
 
-        $rootScope.theme          = "light";
+        $rootScope.theme          = "dark";
         $rootScope.gravatarPrefix = ( window.location.protocol === "https:" ? "https://secure.gravatar.com"
                                                                             : "http://www.gravatar.com" ) + "/avatar/";
 
@@ -88,7 +88,7 @@ angular.module( "wall.controllers", [] )
 
                             //Repos.parseBuild( builds[ i ] );
                             Builds.parseBuild( builds[ i ] );
-                            //Developers.parseBuild( builds[ i ] );
+                            Developers.parseBuild( builds[ i ] );
                         }
 
                         Repos.expirePulls();  // TODO: Hit the GitHub API to remove closed pulls instead
