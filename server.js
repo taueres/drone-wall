@@ -16,6 +16,10 @@ var oldApiMapping = function (builds) {
         newBuild.updated_at = build.created_at;
         newBuild.duration = build.finished_at ? build.started_at - build.finished_at : 0;
         newBuild.status = build.status.toLowerCase();
+	if (newBuild.status == 'running') {
+            newBuild.status = 'pending';
+        }
+	newBuild.sha = build.commit;
 
         return newBuild;
     });
@@ -30,13 +34,13 @@ var serveIndex = function ( req, res, next )
 
 var serveFeed = function ( req, res, next )
 {
-    var apiScheme = process.env.API_SCHEME || "https";
-    var apiDomain = process.env.API_DOMAIN || "";
+    var apiScheme = "https";
+    var apiDomain = "drone.facile.it";
     var apiPort   = process.env.API_PORT || (apiScheme == "https" ? 443 : 80);
     var apiToken  = process.env.API_TOKEN  || "";
 
     //var path   = "/api/user/activity?access_token=" + apiToken;
-    var path   = "/api/repos/collaboratori/collaboratori2/builds";
+    var path   = "/api/repos/collaboratori/collaboratori2/builds?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZXh0Ijoic3NhbnRvcm8iLCJ0eXBlIjoidXNlciJ9.B5pjNUlYnfJJoiNUdkSykscMsNRSiIyla6KMG1sEUXw";
     var client = apiScheme == "https" ? https : http;
 
     var req = client.get(
@@ -55,12 +59,15 @@ var serveFeed = function ( req, res, next )
 
         } ).on( "end", function( )
         {
+
             var feed = JSON.parse(body);
             var newFeed = oldApiMapping(feed);
 
             res.send(newFeed);
         } );
     } );
+
+
 
     req.on( "error", function( e )
     {
