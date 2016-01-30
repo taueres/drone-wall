@@ -112,7 +112,7 @@ angular.module( "wall.controllers", [] )
                                     if( !$scope.workingRepos.length )
                                     {
                                         $scope.workingRepos = $scope.workingRepos.concat(
-                                                                  $filter( "orderBy" )( $scope.repos, "name" ) );
+                                                                  $filter( "orderBy" )( $scope.repos, "updated_at" ) );
                                     }
 
                                     // Append the next repo to the list
@@ -124,8 +124,8 @@ angular.module( "wall.controllers", [] )
                         }
                         else
                         {
-                            $scope.workingRepos = $filter( "orderBy" )( [].concat( $scope.repos ), "name" );
-                            $scope.displayRepos = $filter( "orderBy" )( [].concat( $scope.repos ), "name" );
+                            $scope.workingRepos = $filter( "orderBy" )( [].concat( $scope.repos ), "updated_at" );
+                            $scope.displayRepos = $filter( "orderBy" )( [].concat( $scope.repos ), "updated_at" );
                         }
                     }
                     else

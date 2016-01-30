@@ -39,6 +39,7 @@ angular.module( "wall.services", [] )
                     currentRepo.lastMerge = build.started_at;
                     currentRepo.status    = build.status;
                     currentRepo.gravatar  = build.gravatar;
+                    currentRepo.updated_at = build.updated_at;
                 }
             }
         };
@@ -62,7 +63,8 @@ angular.module( "wall.services", [] )
                 slug:      build.slug,
                 name:      build.branch,
                 pulls:     [],
-                lastMerge: null
+                lastMerge: null,
+                updated_at: build.updated_at
             };
 
             repos.push( newRepo );
