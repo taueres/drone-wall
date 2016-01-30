@@ -86,12 +86,12 @@ angular.module( "wall.controllers", [] )
                         {
                             // TODO: Save these three services in local storage, to restore after a hard refresh
 
-                            //Repos.parseBuild( builds[ i ] );
+                            Repos.parseBuild( builds[ i ] );
                             Builds.parseBuild( builds[ i ] );
                             Developers.parseBuild( builds[ i ] );
                         }
 
-                        Repos.expirePulls();  // TODO: Hit the GitHub API to remove closed pulls instead
+                        //Repos.expirePulls();  // TODO: Hit the GitHub API to remove closed pulls instead
                         $scope.updating = false;
 
                         // Scroll the list of repositories when it's long enough

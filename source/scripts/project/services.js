@@ -27,79 +27,19 @@ angular.module( "wall.services", [] )
 
         var parseBuild = function ( build )
         {
-            build.slug      = build.owner + "/" + build.name;
+            build.slug      = build.branch;
 
-            var checkMerge  = build.message.match( /Merge pull request #([0-9]+)/i );
             var currentRepo = findRepo( build.slug ) || addRepo( build );
-            var currentPull = null;
 
-            if( build.pull_request )
+            // Update repo with details from latest non-pull build
+            if( build.status != "Pending" )
             {
-                var pullIndex = findPullIndex( currentRepo.pulls, build.pull_request );
-
-                if( pullIndex !== null )
+                if( !currentRepo.lastMerge || build.started_at >= currentRepo.lastMerge )
                 {
-                    // Update existing pull request
-                    currentPull            = currentRepo.pulls[ pullIndex ];
-
-                    // Toggle status if this is the first fresh build coming in
-                    currentPull.status     = ( currentPull.buildCount === 0 && build.status == "Started" ) ?
-                                             build.status : currentPull.status;
-
-                    // Increment or decrement build count, don't let it go below zero (possible during first load)
-                    currentPull.buildCount = currentPull.buildCount + ( build.status == "Started" ? 1 : -1 );
-                    currentPull.buildCount = currentPull.buildCount < 0 ? 0 : currentPull.buildCount;
-
-                    // Update status if all active builds have completed
-                    currentPull.status     = currentPull.buildCount > 0 ? currentPull.status : build.status;
-
-                    // Always update the updated time
-                    currentPull.updated_at = build.updated_at;
+                    currentRepo.lastMerge = build.started_at;
+                    currentRepo.status    = build.status;
+                    currentRepo.gravatar  = build.gravatar;
                 }
-                else
-                {
-                    // Add a new pull request
-                    var newPull = angular.extend( {}, build,
-                        { merging: false, buildCount: ( build.status == "Started" ? 1 : 0 ) } );
-                    currentPull = newPull;
-                    currentRepo.pulls.push( newPull );
-                    $rootScope.$broadcast( "newPull", newPull );
-                }
-            }
-            else
-            {
-                if( checkMerge )
-                {
-                    var pullIndex = findPullIndex( currentRepo.pulls, checkMerge[ 1 ] );
-
-                    // Remove merged pull request
-                    if( pullIndex !== null )
-                    {
-                        currentRepo.gravatar = currentRepo.pulls[ pullIndex ].gravatar;
-
-                        if( build.status == "Started" )
-                        {
-                            currentRepo.pulls[ pullIndex ].merging = true;
-                        }
-                        else if( build.status == "Success" || build.status == "Failure" ||
-                                 build.status == "Error" || build.status == "Killed" )
-                        {
-                            currentRepo.pulls.splice( pullIndex, 1 );
-                        }
-                    }
-                }
-
-                // Update repo with details from latest non-pull build
-                if( build.status != "Pending" )
-                {
-                    if( !currentRepo.lastMerge || build.started_at >= currentRepo.lastMerge )
-                    {
-                        currentRepo.lastMerge = build.started_at;
-                        currentRepo.status    = build.status;
-                        currentRepo.gravatar  = checkMerge ? currentRepo.gravatar : build.gravatar;
-                    }
-                }
-
             }
         };
 
@@ -120,8 +60,7 @@ angular.module( "wall.services", [] )
         {
             var newRepo = {
                 slug:      build.slug,
-                name:      build.name,
-                owner:     build.owner,
+                name:      build.branch,
                 pulls:     [],
                 lastMerge: null
             };
